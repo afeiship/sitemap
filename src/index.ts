@@ -60,12 +60,13 @@ class Sitemap {
     const filename = inFilename || 'sitemap.xml';
     const cwd = this.options.cwd;
     const baseOpts = inIsIndex ? getXMLMeta('sitemapindex') : getXMLMeta('urlset');
+    const key = inIsIndex ? 'sitemap' : 'url';
     const xmlstr = toXML(
       {
         ...baseOpts,
         _content: inUrls.map((url) => {
           return {
-            url: {
+            [key]: {
               loc: url,
               lastmod: new Date().toISOString()
             }
