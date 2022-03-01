@@ -49,7 +49,6 @@
     "@jswork/next": "^1.0.9",
     "@jswork/next-chunk": "^1.0.2",
     "jstoxml": "^2.2.9",
-    "mkdirp": "^1.0.4",
-    "tar-stream": "^2.2.0"
+    "mkdirp": "^1.0.4"
   }
 }

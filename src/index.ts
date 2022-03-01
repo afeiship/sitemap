@@ -2,26 +2,19 @@ import { toXML } from 'jstoxml';
 import nx from '@jswork/next';
 import nxChunk from '@jswork/next-chunk';
 import fs from 'fs';
-import path from 'path';
 import mkdirp from 'mkdirp';
 import del from 'del';
-import tar from 'tar-stream';
 import { execSync } from 'child_process';
 
 const XML_OPTIONS = { header: true, indent: '  ' };
-const BASE_URLSET = {
-  _name: 'urlset',
-  _attrs: {
-    xmlns: 'http://www.sitemaps.org/schemas/sitemap/0.9',
-    version: '2.0'
-  }
-};
-const SITEMAP_INDEX_TEMPLATE = {
-  _name: 'sitemapindex',
-  _attrs: {
-    xmlns: 'http://www.sitemaps.org/schemas/sitemap/0.9',
-    version: '2.0'
-  }
+const getXMLMeta = (name) => {
+  return {
+    _name: name,
+    _attrs: {
+      xmlns: 'http://www.sitemaps.org/schemas/sitemap/0.9',
+      version: '2.0'
+    }
+  };
 };
 
 const defaults = {
@@ -66,7 +59,7 @@ class Sitemap {
   single(inUrls, inIsIndex?, inFilename?) {
     const filename = inFilename || 'sitemap.xml';
     const cwd = this.options.cwd;
-    const baseOpts = inIsIndex ? SITEMAP_INDEX_TEMPLATE : BASE_URLSET;
+    const baseOpts = inIsIndex ? getXMLMeta('sitemapindex') : getXMLMeta('urlset');
     const xmlstr = toXML(
       {
         ...baseOpts,
