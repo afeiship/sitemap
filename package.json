@@ -19,7 +19,6 @@
     "@jswork/next-range": "^1.0.0",
     "@types/jest": "^26.0.23",
     "babel-jest": "^27.0.1",
-    "del": "^5.1.0",
     "gulp": "^4.0.2",
     "gulp-header": "^2.0.9",
     "gulp-ignore": "^3.0.0",
@@ -49,6 +48,7 @@
     "@jswork/next": "^1.0.9",
     "@jswork/next-chunk": "^1.0.2",
     "jstoxml": "^2.2.9",
-    "mkdirp": "^1.0.4"
+    "mkdirp": "^1.0.4",
+    "del": "^5.1.0"
   }
 }
