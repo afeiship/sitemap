@@ -16,6 +16,7 @@
     "@babel/preset-env": "^7.14.2",
     "@babel/preset-typescript": "^7.13.0",
     "@jswork/gulp-pkg-header": "^1.0.4",
+    "@jswork/next-range": "^1.0.0",
     "@types/jest": "^26.0.23",
     "babel-jest": "^27.0.1",
     "del": "^5.1.0",
@@ -48,6 +49,7 @@
     "@jswork/next": "^1.0.9",
     "@jswork/next-chunk": "^1.0.2",
     "jstoxml": "^2.2.9",
-    "targz": "^1.0.1"
+    "mkdirp": "^1.0.4",
+    "tar-stream": "^2.2.0"
   }
 }

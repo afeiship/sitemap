@@ -2,6 +2,11 @@ import { toXML } from 'jstoxml';
 import nx from '@jswork/next';
 import nxChunk from '@jswork/next-chunk';
 import fs from 'fs';
+import path from 'path';
+import mkdirp from 'mkdirp';
+import del from 'del';
+import tar from 'tar-stream';
+import { execSync } from 'child_process';
 
 const XML_OPTIONS = { header: true, indent: '  ' };
 const BASE_URLSET = {
@@ -11,22 +16,61 @@ const BASE_URLSET = {
     version: '2.0'
   }
 };
+const SITEMAP_INDEX_TEMPLATE = {
+  _name: 'sitemapindex',
+  _attrs: {
+    xmlns: 'http://www.sitemaps.org/schemas/sitemap/0.9',
+    version: '2.0'
+  }
+};
 
 const defaults = {
   limit: 30000,
+  domain: 'http://www.example.com',
   cwd: process.cwd()
 };
 
-export default (inUrls, inOptions): void => {
-  const opts = nx.mix(defaults, inOptions);
-  const chunks = nxChunk(inUrls, opts.limit);
-  chunks.forEach((urls, index) => {
-    const idx = index + 1;
-    const filename = `sitemap${idx}.xml`;
+class Sitemap {
+  private options;
+  private urls: any[] = [];
+
+  get chunks() {
+    return nxChunk(this.urls, this.options.limit);
+  }
+
+  get hasMultiple() {
+    return this.chunks.length > 1;
+  }
+
+  generate() {
+    if (this.hasMultiple) {
+      this.multiple();
+      this.sitemapindex();
+    } else {
+      this.single(this.urls);
+    }
+  }
+
+  constructor(inUrls, inOptions) {
+    this.urls = inUrls;
+    this.options = nx.mix(defaults, inOptions);
+    this.cleanup();
+  }
+
+  cleanup() {
+    const cwd = this.options.cwd;
+    mkdirp.sync(cwd);
+    del.sync([`${cwd}/sitemap*.xml`, `${cwd}/sitemap*.tar.gz`]);
+  }
+
+  single(inUrls, inIsIndex?, inFilename?) {
+    const filename = inFilename || 'sitemap.xml';
+    const cwd = this.options.cwd;
+    const baseOpts = inIsIndex ? SITEMAP_INDEX_TEMPLATE : BASE_URLSET;
     const xmlstr = toXML(
       {
-        ...BASE_URLSET,
-        _content: urls.map((url) => {
+        ...baseOpts,
+        _content: inUrls.map((url) => {
           return {
             url: {
               loc: url,
@@ -37,6 +81,31 @@ export default (inUrls, inOptions): void => {
       },
       XML_OPTIONS
     );
-    fs.writeFileSync(`${opts.cwd}/${filename}`, xmlstr);
-  });
+    fs.writeFileSync(`${cwd}/${filename}`, xmlstr);
+  }
+
+  multiple() {
+    const chunks = this.chunks;
+    const cwd = this.options.cwd;
+    chunks.forEach((urls, index) => {
+      const idx = index + 1;
+      const filename = `sitemap${idx}.xml`;
+      this.single(urls, false, filename);
+      execSync(`cd ${cwd} && tar -czf ${filename}.tar.gz ${filename} && cd -`);
+    });
+  }
+
+  sitemapindex() {
+    const count = this.chunks.length;
+    const urls: any[] = [];
+    for (let i = 1; i <= count; i++) {
+      urls.push(`${this.options.domain}/sitemap${i}.xml.tar.gz`);
+    }
+    this.single(urls, true);
+  }
+}
+
+export default (inUrls, inOptions): void => {
+  const sitemapInstance = new Sitemap(inUrls, inOptions);
+  sitemapInstance.generate();
 };

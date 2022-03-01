@@ -1,9 +1,12 @@
 import fn from '../src';
+import nx from '@jswork/next';
+import '@jswork/next-range';
 
 describe('api.basic', () => {
   test('normail single value case', () => {
-    const urls = ['https://www.js.work/1.html', 'https://www.js.work/2.html'];
+    const ids = nx.range(1, 1000);
+    const urls = ids.map((id) => `http://www.example.com/${id}`);
 
-    fn(urls, { limit: 30000, cwd: process.cwd() });
+    fn(urls, { limit: 3000, cwd: '.tmp' });
   });
 });
