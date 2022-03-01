@@ -47,10 +47,10 @@ class Sitemap {
   constructor(inUrls, inOptions) {
     this.urls = inUrls;
     this.options = nx.mix(defaults, inOptions);
-    this.cleanup();
+    this.setup();
   }
 
-  cleanup() {
+  setup() {
     const cwd = this.options.cwd;
     mkdirp.sync(cwd);
     del.sync([`${cwd}/sitemap*.xml`, `${cwd}/sitemap*.tar.gz`]);
