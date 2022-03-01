@@ -1,6 +1,6 @@
 {
   "name": "@jswork/sitemap",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Create sitemap with nodejs.",
   "main": "dist/cjs/index.js",
   "module": "dist/esm/index.js",
@@ -50,5 +50,8 @@
     "jstoxml": "^2.2.9",
     "mkdirp": "^1.0.4",
     "del": "^5.1.0"
-  }
+  },
+  "keywords": [
+    "sitemap"
+  ]
 }
